@@ -847,21 +847,20 @@ async function callClaude(prompt, btnId) {
   const btn = document.getElementById(btnId);
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Thinking...'; }
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+   const res = await fetch('/.netlify/functions/ai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
+  prompt: prompt
+}) 
+    
     });
     const data = await res.json();
-    return data.content?.[0]?.text || 'No response received.';
+    return data.text || 'No response received.';;
   } catch(e) {
     return 'Error connecting to AI. Please try again.';
   } finally {
-    if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label || 'Run'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'Done'; }
   }
 }
 
@@ -1126,19 +1125,21 @@ async function sendChat() {
   
   const systemContext = `You are a knowledgeable, practical business advisor for ${getBizName()}, a ${getBizType()}. Give concise, actionable advice tailored to small businesses. Use bullet points for lists. Be friendly and encouraging but direct.`;
   
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: systemContext,
-        messages: chatHistory
-      })
-    });
-    const data = await res.json();
-    const reply = data.content?.[0]?.text || 'Sorry, I could not get a response.';
+try {
+  const res = await fetch('/.netlify/functions/ai', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      system: systemContext,
+      messages: chatHistory
+    })
+  });
+
+  const data = await res.json();
+  const reply = data.content?.[0]?.text || 'Sorry, I could not get a response.';
+   
     chatHistory.push({ role:'assistant', content: reply });
     chatEl.innerHTML += `<div class="msg msg-ai"><div class="msg-label">BizMind AI</div>${reply}</div>`;
     chatEl.scrollTop = chatEl.scrollHeight;
