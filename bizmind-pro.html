@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BizMind Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131c;
+    --surface2: #1c1c2e;
+    --border: #2a2a3d;
+    --accent: #6c63ff;
+    --accent2: #ff6584;
+    --accent3: #43e6b5;
+    --gold: #ffd166;
+    --text: #e8e8f0;
+    --muted: #7878a0;
+    --success: #43e6b5;
+    --warning: #ffd166;
+    --danger: #ff6584;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 20% 20%, rgba(108,99,255,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(67,230,181,0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 10%, rgba(255,101,132,0.05) 0%, transparent 40%);
+    animation: bgShift 20s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 0;
+  }
+  @keyframes bgShift {
+    0% { transform: translate(0,0) rotate(0deg); }
+    100% { transform: translate(2%,2%) rotate(3deg); }
+  }
+
+  /* Header */
+  header {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,15,0.8);
+    backdrop-filter: blur(20px);
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--accent), var(--accent3));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+  }
+  .logo-text span { color: var(--accent3); }
+  .header-badge {
+    background: linear-gradient(135deg, rgba(108,99,255,0.2), rgba(67,230,181,0.2));
+    border: 1px solid rgba(108,99,255,0.4);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent3);
+    letter-spacing: 0.5px;
+  }
+
+  /* Nav tabs */
+  .nav-wrap {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    gap: 4px;
+    padding: 16px 40px;
+    overflow-x: auto;
+    background: rgba(10,10,15,0.6);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    scrollbar-width: none;
+  }
+  .nav-wrap::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover {
+    background: var(--surface2);
+    color: var(--text);
+    border-color: var(--border);
+  }
+  .tab-btn.active {
+    background: linear-gradient(135deg, rgba(108,99,255,0.25), rgba(67,230,181,0.15));
+    color: var(--text);
+    border-color: rgba(108,99,255,0.5);
+  }
+  .tab-btn .tab-icon { font-size: 16px; }
+
+  /* Main content */
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 36px 40px;
+  }
+  .tab-panel { display: none; animation: fadeUp 0.3s ease; }
+  .tab-panel.active { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Section header */
+  .section-header {
+    margin-bottom: 28px;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .section-title span { 
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .section-desc { color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: rgba(108,99,255,0.3); }
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Grid */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  @media(max-width:700px) { .grid-2,.grid-3 { grid-template-columns:1fr; } }
+
+  /* Inputs */
+  textarea, input, select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    resize: vertical;
+    transition: border-color 0.2s;
+  }
+  textarea:focus, input:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(108,99,255,0.12);
+  }
+  textarea { min-height: 130px; }
+  input { min-height: 44px; resize: none; }
+  select { min-height: 44px; cursor: pointer; }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 7px;
+  }
+  .field { margin-bottom: 16px; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 10px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #5a52e0);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(108,99,255,0.3);
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(108,99,255,0.45);
+  }
+  .btn-primary:disabled {
+    opacity: 0.5;
+    transform: none;
+    cursor: not-allowed;
+  }
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-danger {
+    background: rgba(255,101,132,0.15);
+    color: var(--danger);
+    border: 1px solid rgba(255,101,132,0.3);
+  }
+  .btn-sm { padding: 7px 14px; font-size: 13px; }
+
+  /* AI Output */
+  .ai-output {
+    background: linear-gradient(135deg, rgba(108,99,255,0.08), rgba(67,230,181,0.05));
+    border: 1px solid rgba(108,99,255,0.25);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 16px;
+    font-size: 14px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    display: none;
+    position: relative;
+  }
+  .ai-output.show { display: block; animation: fadeUp 0.3s ease; }
+  .ai-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent3);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .loading-dots {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .loading-dots span {
+    width: 6px; height: 6px;
+    background: var(--accent3);
+    border-radius: 50%;
+    animation: dot 1.2s infinite;
+  }
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes dot {
+    0%,80%,100% { opacity: 0.2; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1); }
+  }
+
+  /* Stats cards */
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.8px; }
+
+  /* Inventory table */
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 12px 14px;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(42,42,61,0.5);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-ok { background: rgba(67,230,181,0.15); color: var(--accent3); }
+  .badge-low { background: rgba(255,209,102,0.15); color: var(--gold); }
+  .badge-out { background: rgba(255,101,132,0.15); color: var(--danger); }
+
+  /* Invoice */
+  .invoice-preview {
+    background: #fff;
+    color: #111;
+    border-radius: 12px;
+    padding: 32px;
+    margin-top: 20px;
+    display: none;
+  }
+  .invoice-preview.show { display: block; animation: fadeUp 0.3s ease; }
+  .inv-header { display: flex; justify-content: space-between; margin-bottom: 24px; }
+  .inv-biz { font-size: 22px; font-weight: 700; color: #111; }
+  .inv-number { font-size: 13px; color: #666; }
+  .inv-divider { border: none; border-top: 2px solid #eee; margin: 16px 0; }
+  .inv-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 14px; }
+  .inv-label { color: #666; }
+  .inv-total { font-size: 20px; font-weight: 700; color: #6c63ff; margin-top: 12px; }
+  .inv-items-header {
+    display: grid; grid-template-columns: 3fr 1fr 1fr 1fr;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.8px; color: #999; padding: 8px 0;
+    border-bottom: 1px solid #eee;
+  }
+  .inv-item {
+    display: grid; grid-template-columns: 3fr 1fr 1fr 1fr;
+    font-size: 14px; padding: 8px 0; border-bottom: 1px solid #f5f5f5;
+  }
+  .print-btn { margin-top:16px; }
+
+  /* Advisor chat */
+  .chat-messages {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    min-height: 300px;
+    max-height: 420px;
+    overflow-y: auto;
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .msg {
+    max-width: 82%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+  .msg-user {
+    align-self: flex-end;
+    background: linear-gradient(135deg, var(--accent), #5a52e0);
+    color: #fff;
+    border-radius: 12px 12px 3px 12px;
+  }
+  .msg-ai {
+    align-self: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px 12px 12px 3px;
+  }
+  .msg-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .chat-input-row { display: flex; gap: 10px; }
+  .chat-input-row input { flex: 1; }
+
+  /* Marketing chips */
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--muted);
+  }
+  .chip:hover, .chip.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(108,99,255,0.1);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* Copy button */
+  .copy-btn {
+    position: absolute;
+    top: 14px; right: 14px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 7px;
+    padding: 5px 11px;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .copy-btn:hover { background: rgba(108,99,255,0.2); color: var(--accent); }
+
+  /* Welcome */
+  .welcome-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 24px;
+  }
+  @media(max-width:700px) { .welcome-grid { grid-template-columns: 1fr; } }
+  .welcome-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-align: center;
+  }
+  .welcome-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(108,99,255,0.2);
+  }
+  .welcome-icon { font-size: 32px; margin-bottom: 10px; }
+  .welcome-card h3 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .welcome-card p { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+
+  .divider-line {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 20px 0;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">⚡</div>
+    <div class="logo-text">BizMind <span>Pro</span></div>
+  </div>
+  <div class="header-badge">✦ AI-Powered</div>
+</header>
+
+<nav class="nav-wrap">
+  <button class="tab-btn active" onclick="switchTab('home')"><span class="tab-icon">🏠</span>Home</button>
+  <button class="tab-btn" onclick="switchTab('sales')"><span class="tab-icon">📊</span>Sales & Costs</button>
+  <button class="tab-btn" onclick="switchTab('reviews')"><span class="tab-icon">⭐</span>Reviews</button>
+  <button class="tab-btn" onclick="switchTab('marketing')"><span class="tab-icon">📣</span>Marketing</button>
+  <button class="tab-btn" onclick="switchTab('invoice')"><span class="tab-icon">🧾</span>Invoices</button>
+  <button class="tab-btn" onclick="switchTab('inventory')"><span class="tab-icon">📦</span>Inventory</button>
+  <button class="tab-btn" onclick="switchTab('advisor')"><span class="tab-icon">🤖</span>AI Advisor</button>
+</nav>
+
+<main>
+
+  <!-- HOME -->
+  <div id="tab-home" class="tab-panel active">
+    <div class="section-header">
+      <div class="section-title">Welcome to <span>BizMind Pro</span></div>
+      <div class="section-desc">Your all-in-one AI-powered command center. Built for every small business — restaurants, retail, services, and more.</div>
+    </div>
+    <div class="field">
+      <label>Your Business Name (personalizes all AI responses)</label>
+      <input type="text" id="bizName" placeholder="e.g. Maria's Café, Sparkle Auto Detailing..." oninput="saveBizName()" />
+    </div>
+    <div class="field">
+      <label>Business Type / Industry</label>
+      <input type="text" id="bizType" placeholder="e.g. Restaurant, Hair Salon, Retail Boutique, Plumbing..." oninput="saveBizType()" />
+    </div>
+    <div class="welcome-grid">
+      <div class="welcome-card" onclick="switchTab('sales')">
+        <div class="welcome-icon">📊</div>
+        <h3>Sales & Cost Analyzer</h3>
+        <p>Paste your POS data & invoices. Get instant AI-powered profit insights.</p>
+      </div>
+      <div class="welcome-card" onclick="switchTab('reviews')">
+        <div class="welcome-icon">⭐</div>
+        <h3>Review Responder</h3>
+        <p>Generate professional, personalized responses to customer reviews in seconds.</p>
+      </div>
+      <div class="welcome-card" onclick="switchTab('marketing')">
+        <div class="welcome-icon">📣</div>
+        <h3>Marketing Generator</h3>
+        <p>Get social posts, promotions, email campaigns, and ad copy — on demand.</p>
+      </div>
+      <div class="welcome-card" onclick="switchTab('invoice')">
+        <div class="welcome-icon">🧾</div>
+        <h3>Invoice Builder</h3>
+        <p>Create clean, professional invoices instantly. Print or download ready.</p>
+      </div>
+      <div class="welcome-card" onclick="switchTab('inventory')">
+        <div class="welcome-icon">📦</div>
+        <h3>Inventory Tracker</h3>
+        <p>Track stock levels, get low-stock alerts, and AI reorder suggestions.</p>
+      </div>
+      <div class="welcome-card" onclick="switchTab('advisor')">
+        <div class="welcome-icon">🤖</div>
+        <h3>AI Business Advisor</h3>
+        <p>Ask anything — pricing, staffing, growth ideas, problem solving. Always available.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SALES & COSTS -->
+  <div id="tab-sales" class="tab-panel">
+    <div class="section-header">
+      <div class="section-title">Sales & <span>Cost Analysis</span></div>
+      <div class="section-desc">Paste your data below and let AI find opportunities to increase profit, cut costs, and grow revenue.</div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">📈 Sales / POS Data</div>
+        <div class="field">
+          <textarea id="salesData" placeholder="Paste your sales data here...&#10;Example:&#10;Item | Qty Sold | Price&#10;Latte | 142 | $5.50&#10;Sandwich | 89 | $9.00&#10;Muffin | 203 | $3.50&#10;&#10;Or paste a CSV export from your POS system."></textarea>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🧾 Cost / Invoice Data</div>
+        <div class="field">
+          <textarea id="costData" placeholder="Paste your purchasing/cost data here...&#10;Example:&#10;Item | Supplier | Cost&#10;Coffee beans | BeanCo | $180&#10;Bread | LocalBakery | $95&#10;Milk (10gal) | DairyFarm | $48&#10;&#10;Or paste invoice totals, COGS, or expense lines."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Specific focus (optional)</label>
+      <input type="text" id="salesFocus" placeholder="e.g. Where am I losing money? Which items have the best margin? How can I reduce costs?" />
+    </div>
+    <button class="btn btn-primary" onclick="analyzeSales()" id="salesBtn">
+      ⚡ Analyze with AI
+    </button>
+    <div class="ai-output" id="salesOutput">
+      <div class="ai-label">✦ AI Analysis</div>
+      <button class="copy-btn" onclick="copyOutput('salesOutput')">Copy</button>
+      <div id="salesResult"></div>
+    </div>
+  </div>
+
+  <!-- REVIEWS -->
+  <div id="tab-reviews" class="tab-panel">
+    <div class="section-header">
+      <div class="section-title">Review <span>Responder</span></div>
+      <div class="section-desc">Paste any customer review and get a professional, on-brand response instantly.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 Customer Review</div>
+      <div class="field">
+        <textarea id="reviewText" placeholder="Paste the customer review here...&#10;&#10;Example:&#10;'The food was amazing but we waited 45 minutes for our order. The staff was friendly though and they did apologize. I'd probably come back but they need to improve their speed.'" style="min-height:110px;"></textarea>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label>Review Platform</label>
+          <select id="reviewPlatform">
+            <option>Google</option>
+            <option>Yelp</option>
+            <option>TripAdvisor</option>
+            <option>Facebook</option>
+            <option>Airbnb</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Star Rating</label>
+          <select id="reviewStars">
+            <option>⭐ 1 star</option>
+            <option>⭐⭐ 2 stars</option>
+            <option>⭐⭐⭐ 3 stars</option>
+            <option>⭐⭐⭐⭐ 4 stars</option>
+            <option value="5" selected>⭐⭐⭐⭐⭐ 5 stars</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Response Tone</label>
+        <select id="reviewTone">
+          <option>Professional & Formal</option>
+          <option>Warm & Friendly</option>
+          <option>Apologetic & Empathetic</option>
+          <option>Concise & Direct</option>
+          <option>Enthusiastic & Grateful</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="respondReview()" id="reviewBtn">
+      ✍️ Generate Response
+    </button>
+    <div class="ai-output" id="reviewOutput">
+      <div class="ai-label">✦ Suggested Response</div>
+      <button class="copy-btn" onclick="copyOutput('reviewOutput')">Copy</button>
+      <div id="reviewResult"></div>
+    </div>
+  </div>
+
+  <!-- MARKETING -->
+  <div id="tab-marketing" class="tab-panel">
+    <div class="section-header">
+      <div class="section-title">Marketing <span>Generator</span></div>
+      <div class="section-desc">Generate on-brand marketing content for every channel — social, email, promotions, and ads.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">🎯 What do you need?</div>
+      <div class="field">
+        <label>Content Type</label>
+        <div class="chip-row" id="marketingChips">
+          <div class="chip active" onclick="selectChip(this)">Instagram Post</div>
+          <div class="chip" onclick="selectChip(this)">Facebook Post</div>
+          <div class="chip" onclick="selectChip(this)">Email Campaign</div>
+          <div class="chip" onclick="selectChip(this)">Special Promotion</div>
+          <div class="chip" onclick="selectChip(this)">SMS/Text Blast</div>
+          <div class="chip" onclick="selectChip(this)">Google Ad</div>
+          <div class="chip" onclick="selectChip(this)">Loyalty Program</div>
+          <div class="chip" onclick="selectChip(this)">Grand Opening</div>
+          <div class="chip" onclick="selectChip(this)">Seasonal Campaign</div>
+          <div class="chip" onclick="selectChip(this)">Referral Program</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Campaign Goal / What to Promote</label>
+        <input type="text" id="marketingGoal" placeholder="e.g. 20% off this weekend only, new menu items, summer sale, happy hour specials..." />
+      </div>
+      <div class="field">
+        <label>Target Audience (optional)</label>
+        <input type="text" id="marketingAudience" placeholder="e.g. local families, young professionals, existing customers, foodies..." />
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="generateMarketing()" id="marketingBtn">
+      🚀 Generate Content
+    </button>
+    <div class="ai-output" id="marketingOutput">
+      <div class="ai-label">✦ Marketing Content</div>
+      <button class="copy-btn" onclick="copyOutput('marketingOutput')">Copy</button>
+      <div id="marketingResult"></div>
+    </div>
+  </div>
+
+  <!-- INVOICE -->
+  <div id="tab-invoice" class="tab-panel">
+    <div class="section-header">
+      <div class="section-title">Invoice <span>Builder</span></div>
+      <div class="section-desc">Create professional invoices in seconds. Printable and ready to send.</div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">🏢 Your Business</div>
+        <div class="field"><label>Business Name</label><input type="text" id="invBizName" placeholder="Your Business Name" /></div>
+        <div class="field"><label>Address</label><input type="text" id="invBizAddress" placeholder="123 Main St, City, State" /></div>
+        <div class="field"><label>Phone / Email</label><input type="text" id="invBizContact" placeholder="(555) 555-5555 | you@email.com" /></div>
+      </div>
+      <div class="card">
+        <div class="card-title">👤 Client Info</div>
+        <div class="field"><label>Client Name</label><input type="text" id="invClientName" placeholder="Client or Company Name" /></div>
+        <div class="field"><label>Client Address</label><input type="text" id="invClientAddress" placeholder="Client Address" /></div>
+        <div class="field"><label>Invoice # & Date</label><input type="text" id="invNumber" placeholder="INV-001 | March 30, 2026" /></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 Line Items</div>
+      <div id="invItems">
+        <div class="inv-item-row grid-2" style="gap:10px;margin-bottom:10px;">
+          <div class="field" style="margin:0;"><label>Description</label><input type="text" placeholder="Service or product" class="inv-desc" /></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="field" style="margin:0;"><label>Qty</label><input type="number" placeholder="1" class="inv-qty" /></div>
+            <div class="field" style="margin:0;"><label>Unit Price ($)</label><input type="number" placeholder="0.00" class="inv-price" /></div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="addInvItem()" style="margin-bottom:14px;">+ Add Line Item</button>
+      <div class="grid-2">
+        <div class="field"><label>Tax Rate (%)</label><input type="number" id="invTax" placeholder="0" /></div>
+        <div class="field"><label>Notes / Payment Terms</label><input type="text" id="invNotes" placeholder="e.g. Net 30, Thank you for your business!" /></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="buildInvoice()">🧾 Generate Invoice</button>
+    <div class="invoice-preview" id="invoicePreview">
+      <div id="invoiceContent"></div>
+      <button class="btn btn-secondary print-btn" onclick="printInvoice()">🖨️ Print Invoice</button>
+    </div>
+  </div>
+
+  <!-- INVENTORY -->
+  <div id="tab-inventory" class="tab-panel">
+    <div class="section-header">
+      <div class="section-title">Inventory <span>Tracker</span></div>
+      <div class="section-desc">Track your stock levels, get alerts for low inventory, and use AI to plan reorders.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">➕ Add / Update Item</div>
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:12px;align-items:end;">
+        <div class="field" style="margin:0;"><label>Item Name</label><input type="text" id="invItemName" placeholder="Product name" /></div>
+        <div class="field" style="margin:0;"><label>Category</label><input type="text" id="invItemCat" placeholder="e.g. Drinks" /></div>
+        <div class="field" style="margin:0;"><label>Stock Qty</label><input type="number" id="invItemQty" placeholder="0" /></div>
+        <div class="field" style="margin:0;"><label>Low Stock Alert</label><input type="number" id="invItemMin" placeholder="5" /></div>
+        <button class="btn btn-primary btn-sm" onclick="addInventoryItem()" style="margin-bottom:1px;">Add</button>
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table id="inventoryTable">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Category</th>
+            <th>Stock</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="inventoryBody">
+          <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:30px;">No items yet. Add your first product above.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-secondary" onclick="getReorderSuggestions()" id="reorderBtn">🤖 AI Reorder Suggestions</button>
+    </div>
+    <div class="ai-output" id="reorderOutput">
+      <div class="ai-label">✦ Reorder Suggestions</div>
+      <div id="reorderResult"></div>
+    </div>
+  </div>
+
+  <!-- AI ADVISOR -->
+  <div id="tab-advisor" class="tab-panel">
+    <div class="section-header">
+      <div class="section-title">AI Business <span>Advisor</span></div>
+      <div class="section-desc">Your always-available business consultant. Ask about pricing, hiring, growth, operations, problems — anything.</div>
+    </div>
+    <div class="chip-row">
+      <div class="chip" onclick="quickAsk('How can I increase my average customer spend?')">💰 Increase spend</div>
+      <div class="chip" onclick="quickAsk('How do I reduce employee turnover?')">👥 Staff retention</div>
+      <div class="chip" onclick="quickAsk('What are the best ways to attract new customers?')">🎯 Get new customers</div>
+      <div class="chip" onclick="quickAsk('How should I price my products/services?')">🏷️ Pricing strategy</div>
+      <div class="chip" onclick="quickAsk('What are common cash flow mistakes small businesses make?')">💸 Cash flow tips</div>
+      <div class="chip" onclick="quickAsk('How can I compete with larger businesses near me?')">🏆 Compete bigger</div>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="msg msg-ai">
+        <div class="msg-label">BizMind AI</div>
+        👋 Hello! I'm your AI business advisor. I know your business and I'm here to help with any challenge — pricing, marketing, staffing, operations, growth, you name it. What's on your mind?
+      </div>
+    </div>
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" placeholder="Ask anything about your business..." onkeydown="if(event.key==='Enter')sendChat()" />
+      <button class="btn btn-primary" onclick="sendChat()" id="chatBtn">Send ✦</button>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ── State ──
+let inventory = [];
+let chatHistory = [];
+
+// ── Tab switching ──
+function switchTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ── Biz name/type ──
+function getBizName() { return document.getElementById('bizName').value || 'my business'; }
+function getBizType() { return document.getElementById('bizType').value || 'small business'; }
+function saveBizName() {
+  const v = document.getElementById('bizName').value;
+  document.getElementById('invBizName').value = v;
+}
+function saveBizType() {}
+
+// ── API Call ──
+async function callClaude(prompt, btnId) {
+  const btn = document.getElementById(btnId);
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Thinking...'; }
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    return data.content?.[0]?.text || 'No response received.';
+  } catch(e) {
+    return 'Error connecting to AI. Please try again.';
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label || 'Run'; }
+  }
+}
+
+// ── Sales Analysis ──
+async function analyzeSales() {
+  const sales = document.getElementById('salesData').value.trim();
+  const costs = document.getElementById('costData').value.trim();
+  const focus = document.getElementById('salesFocus').value.trim();
+  if (!sales && !costs) { alert('Please paste some sales or cost data first.'); return; }
+  document.getElementById('salesBtn').textContent = '⏳ Analyzing...';
+  document.getElementById('salesBtn').disabled = true;
+  const prompt = `You are a business financial analyst helping ${getBizName()}, a ${getBizType()}.
+
+SALES DATA:
+${sales || '(none provided)'}
+
+COST / INVOICE DATA:
+${costs || '(none provided)'}
+
+${focus ? 'SPECIFIC FOCUS: ' + focus : ''}
+
+Please provide a thorough analysis including:
+1. 💰 KEY PROFIT INSIGHTS – top performers, margin estimates
+2. ⚠️ COST CONCERNS – where money may be leaking
+3. 📈 PRICING OPPORTUNITIES – items that could be priced higher
+4. ✂️ COST SAVINGS – specific ways to reduce expenses
+5. 🚀 QUICK WINS – 3 things they can act on this week
+
+Be specific, actionable, and use the actual data they provided. Use emojis to make it scannable.`;
+  const result = await callClaude(prompt, 'salesBtn');
+  document.getElementById('salesBtn').textContent = '⚡ Analyze with AI';
+  document.getElementById('salesBtn').disabled = false;
+  document.getElementById('salesResult').textContent = result;
+  const out = document.getElementById('salesOutput');
+  out.classList.add('show');
+}
+
+// ── Review Response ──
+async function respondReview() {
+  const review = document.getElementById('reviewText').value.trim();
+  if (!review) { alert('Please paste a review first.'); return; }
+  const platform = document.getElementById('reviewPlatform').value;
+  const stars = document.getElementById('reviewStars').value;
+  const tone = document.getElementById('reviewTone').value;
+  document.getElementById('reviewBtn').textContent = '⏳ Writing...';
+  document.getElementById('reviewBtn').disabled = true;
+  const prompt = `You are writing a ${platform} review response for ${getBizName()}, a ${getBizType()}.
+
+REVIEW (${stars}): "${review}"
+
+TONE: ${tone}
+
+Write a professional, genuine response that:
+- Addresses specific points the customer made
+- Is personalized (not generic/template sounding)
+- Is the right length for ${platform} (concise but warm)
+- For negative reviews: acknowledges concerns, apologizes sincerely, offers resolution
+- For positive reviews: thanks them specifically, mentions something from their review
+- Ends with an invitation to return
+
+Write ONLY the response text, ready to copy-paste.`;
+  const result = await callClaude(prompt, 'reviewBtn');
+  document.getElementById('reviewBtn').textContent = '✍️ Generate Response';
+  document.getElementById('reviewBtn').disabled = false;
+  document.getElementById('reviewResult').textContent = result;
+  document.getElementById('reviewOutput').classList.add('show');
+}
+
+// ── Marketing ──
+function selectChip(el) {
+  document.querySelectorAll('#marketingChips .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+async function generateMarketing() {
+  const type = document.querySelector('#marketingChips .chip.active')?.textContent || 'Social Post';
+  const goal = document.getElementById('marketingGoal').value.trim();
+  const audience = document.getElementById('marketingAudience').value.trim();
+  if (!goal) { alert('Please describe what you want to promote.'); return; }
+  document.getElementById('marketingBtn').textContent = '⏳ Creating...';
+  document.getElementById('marketingBtn').disabled = true;
+  const prompt = `You are a marketing expert creating content for ${getBizName()}, a ${getBizType()}.
+
+CONTENT TYPE: ${type}
+GOAL / PROMOTION: ${goal}
+TARGET AUDIENCE: ${audience || 'general customers'}
+
+Create compelling ${type} content that:
+- Sounds authentic, not corporate or generic
+- Has a strong hook / opening
+- Includes a clear call to action
+- Uses appropriate tone for the platform
+- Includes relevant hashtags if social media
+
+${type.includes('Email') ? 'Include: Subject line, preview text, body (short), and CTA button text.' : ''}
+${type.includes('SMS') ? 'Keep under 160 characters. Include opt-out note.' : ''}
+
+Provide 2 variations so they can choose the best fit. Label them Option A and Option B.`;
+  const result = await callClaude(prompt, 'marketingBtn');
+  document.getElementById('marketingBtn').textContent = '🚀 Generate Content';
+  document.getElementById('marketingBtn').disabled = false;
+  document.getElementById('marketingResult').textContent = result;
+  document.getElementById('marketingOutput').classList.add('show');
+}
+
+// ── Invoice ──
+function addInvItem() {
+  const row = document.createElement('div');
+  row.className = 'grid-2';
+  row.style.cssText = 'gap:10px;margin-bottom:10px;';
+  row.innerHTML = `
+    <div class="field" style="margin:0;"><input type="text" placeholder="Description" class="inv-desc" /></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:center;">
+      <input type="number" placeholder="Qty" class="inv-qty" />
+      <input type="number" placeholder="Price" class="inv-price" />
+      <button class="btn btn-danger btn-sm" onclick="this.closest('.grid-2').remove()">✕</button>
+    </div>`;
+  document.getElementById('invItems').appendChild(row);
+}
+function buildInvoice() {
+  const biz = document.getElementById('invBizName').value || getBizName();
+  const bizAddr = document.getElementById('invBizAddress').value;
+  const bizContact = document.getElementById('invBizContact').value;
+  const client = document.getElementById('invClientName').value || 'Client';
+  const clientAddr = document.getElementById('invClientAddress').value;
+  const invNum = document.getElementById('invNumber').value || 'INV-001';
+  const tax = parseFloat(document.getElementById('invTax').value) || 0;
+  const notes = document.getElementById('invNotes').value || 'Thank you for your business!';
+
+  const descs = [...document.querySelectorAll('.inv-desc')].map(i=>i.value);
+  const qtys = [...document.querySelectorAll('.inv-qty')].map(i=>parseFloat(i.value)||1);
+  const prices = [...document.querySelectorAll('.inv-price')].map(i=>parseFloat(i.value)||0);
+
+  let subtotal = 0;
+  let itemsHTML = '';
+  descs.forEach((d,i) => {
+    const line = qtys[i]*prices[i];
+    subtotal += line;
+    itemsHTML += `<div class="inv-item"><span>${d||'Service'}</span><span>${qtys[i]}</span><span>$${prices[i].toFixed(2)}</span><span>$${line.toFixed(2)}</span></div>`;
+  });
+  const taxAmt = subtotal*(tax/100);
+  const total = subtotal+taxAmt;
+
+  document.getElementById('invoiceContent').innerHTML = `
+    <div class="inv-header">
+      <div><div class="inv-biz">${biz}</div><div class="inv-number">${bizAddr}</div><div class="inv-number">${bizContact}</div></div>
+      <div style="text-align:right"><div style="font-size:28px;font-weight:800;color:#6c63ff;">INVOICE</div><div class="inv-number">${invNum}</div></div>
+    </div>
+    <hr class="inv-divider">
+    <div class="inv-row"><span class="inv-label">Bill To:</span><span style="font-weight:600">${client}</span></div>
+    <div class="inv-row"><span class="inv-label"></span><span>${clientAddr}</span></div>
+    <hr class="inv-divider">
+    <div class="inv-items-header"><span>Description</span><span>Qty</span><span>Unit Price</span><span>Total</span></div>
+    ${itemsHTML}
+    <hr class="inv-divider">
+    <div class="inv-row"><span class="inv-label">Subtotal</span><span>$${subtotal.toFixed(2)}</span></div>
+    ${tax>0?`<div class="inv-row"><span class="inv-label">Tax (${tax}%)</span><span>$${taxAmt.toFixed(2)}</span></div>`:''}
+    <div class="inv-row inv-total"><span>Total Due</span><span>$${total.toFixed(2)}</span></div>
+    <hr class="inv-divider">
+    <div style="font-size:13px;color:#888">${notes}</div>
+  `;
+  document.getElementById('invoicePreview').classList.add('show');
+}
+function printInvoice() {
+  const content = document.getElementById('invoiceContent').innerHTML;
+  const w = window.open('','','width=800,height=700');
+  w.document.write(`<html><head><title>Invoice</title><style>body{font-family:sans-serif;padding:40px;color:#111}.inv-item,.inv-items-header{display:grid;grid-template-columns:3fr 1fr 1fr 1fr;padding:8px 0;border-bottom:1px solid #eee;font-size:14px}.inv-items-header{font-size:11px;font-weight:700;color:#999;text-transform:uppercase}.inv-row{display:flex;justify-content:space-between;margin-bottom:6px;font-size:14px}.inv-total{font-size:20px;font-weight:700;color:#6c63ff;margin-top:12px}.inv-biz{font-size:22px;font-weight:700}.inv-header{display:flex;justify-content:space-between;margin-bottom:24px}hr{border:none;border-top:2px solid #eee;margin:16px 0}</style></head><body>${content}</body></html>`);
+  w.document.close();
+  w.print();
+}
+
+// ── Inventory ──
+function addInventoryItem() {
+  const name = document.getElementById('invItemName').value.trim();
+  const cat = document.getElementById('invItemCat').value.trim();
+  const qty = parseInt(document.getElementById('invItemQty').value)||0;
+  const min = parseInt(document.getElementById('invItemMin').value)||5;
+  if (!name) { alert('Please enter an item name.'); return; }
+  inventory.push({ name, cat, qty, min, id: Date.now() });
+  renderInventory();
+  document.getElementById('invItemName').value='';
+  document.getElementById('invItemCat').value='';
+  document.getElementById('invItemQty').value='';
+  document.getElementById('invItemMin').value='';
+}
+function renderInventory() {
+  const tbody = document.getElementById('inventoryBody');
+  if (inventory.length===0) {
+    tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:30px;">No items yet. Add your first product above.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = inventory.map(item => {
+    let status, badge;
+    if (item.qty===0) { status='Out of Stock'; badge='badge-out'; }
+    else if (item.qty<=item.min) { status='Low Stock'; badge='badge-low'; }
+    else { status='In Stock'; badge='badge-ok'; }
+    return `<tr>
+      <td style="font-weight:500">${item.name}</td>
+      <td style="color:var(--muted)">${item.cat||'—'}</td>
+      <td style="font-family:'Syne',sans-serif;font-weight:700">${item.qty}</td>
+      <td><span class="badge ${badge}">${status}</span></td>
+      <td>
+        <button class="btn btn-secondary btn-sm" onclick="adjustQty(${item.id},1)">+</button>
+        <button class="btn btn-secondary btn-sm" onclick="adjustQty(${item.id},-1)" style="margin-left:4px">−</button>
+        <button class="btn btn-danger btn-sm" onclick="removeItem(${item.id})" style="margin-left:4px">✕</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+function adjustQty(id, delta) {
+  const item = inventory.find(i=>i.id===id);
+  if (item) { item.qty = Math.max(0, item.qty+delta); renderInventory(); }
+}
+function removeItem(id) {
+  inventory = inventory.filter(i=>i.id!==id);
+  renderInventory();
+}
+async function getReorderSuggestions() {
+  if (inventory.length===0) { alert('Add some inventory items first.'); return; }
+  document.getElementById('reorderBtn').textContent = '⏳ Analyzing...';
+  document.getElementById('reorderBtn').disabled = true;
+  const lowItems = inventory.filter(i=>i.qty<=i.min).map(i=>`${i.name}: ${i.qty} units (min: ${i.min})`).join('\n');
+  const allItems = inventory.map(i=>`${i.name} (${i.cat}): ${i.qty} units`).join('\n');
+  const prompt = `You are an inventory advisor for ${getBizName()}, a ${getBizType()}.
+
+CURRENT INVENTORY:
+${allItems}
+
+LOW/OUT OF STOCK ITEMS:
+${lowItems || 'None currently low'}
+
+Provide smart reorder suggestions:
+1. 🚨 URGENT reorders (out of stock or critically low)
+2. 📋 RECOMMENDED reorders (will run out soon)  
+3. 💡 OPTIMIZATION TIPS (reduce waste, better ordering cadence)
+4. 💰 COST-SAVING IDEAS for their inventory management
+
+Be specific and practical.`;
+  const result = await callClaude(prompt, 'reorderBtn');
+  document.getElementById('reorderBtn').textContent = '🤖 AI Reorder Suggestions';
+  document.getElementById('reorderBtn').disabled = false;
+  document.getElementById('reorderResult').textContent = result;
+  document.getElementById('reorderOutput').classList.add('show');
+}
+
+// ── AI Advisor Chat ──
+function quickAsk(q) {
+  document.getElementById('chatInput').value = q;
+  sendChat();
+}
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  const chatEl = document.getElementById('chatMessages');
+  chatEl.innerHTML += `<div class="msg msg-user"><div class="msg-label">You</div>${msg}</div>`;
+  chatEl.scrollTop = chatEl.scrollHeight;
+  document.getElementById('chatBtn').disabled = true;
+  document.getElementById('chatBtn').textContent = '...';
+  
+  chatHistory.push({ role:'user', content: msg });
+  
+  const systemContext = `You are a knowledgeable, practical business advisor for ${getBizName()}, a ${getBizType()}. Give concise, actionable advice tailored to small businesses. Use bullet points for lists. Be friendly and encouraging but direct.`;
+  
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemContext,
+        messages: chatHistory
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || 'Sorry, I could not get a response.';
+    chatHistory.push({ role:'assistant', content: reply });
+    chatEl.innerHTML += `<div class="msg msg-ai"><div class="msg-label">BizMind AI</div>${reply}</div>`;
+    chatEl.scrollTop = chatEl.scrollHeight;
+  } catch(e) {
+    chatEl.innerHTML += `<div class="msg msg-ai"><div class="msg-label">BizMind AI</div>Error connecting. Please try again.</div>`;
+  }
+  document.getElementById('chatBtn').disabled = false;
+  document.getElementById('chatBtn').textContent = 'Send ✦';
+}
+
+// ── Copy output ──
+function copyOutput(id) {
+  const text = document.getElementById(id).querySelector('[id$="Result"]')?.textContent;
+  if (text) navigator.clipboard.writeText(text).then(()=>{ alert('Copied!'); });
+}
+</script>
+</body>
+</html>
